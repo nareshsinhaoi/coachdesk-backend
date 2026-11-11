@@ -1,0 +1,5 @@
+
+https://github.com/Simpletine/CodeIgniter4-HMVC-Shield
+composer create-project simpletine/codeigniter4-starter ci44_hmvc --stability=dev
+copy env .env
+composer require simpletine/hmvc-shield:*

@@ -1,0 +1,266 @@
+# CoachDesk — Project Status Document
+
+**Prepared:** November 2026 · **Version:** 1.0 · **Project:** CoachDesk SaaS Coaching Institute Management System
+
+---
+
+## 1. Our Agenda
+
+Build **CoachDesk** — a production-grade, multi-tenant SaaS platform for Indian coaching institutes, tuition centres, and training academies. The platform lets each institute independently manage students, batches, attendance, fees, exams, staff, and parent communication from a single unified dashboard.
+
+**Core goals:**
+- **Multi-tenant isolation** — one platform, many institutes, zero data leakage
+- **Enterprise security** — JWT + session auth, RBAC, audit logging, encryption
+- **Complete SaaS lifecycle** — signup → trial → subscription → billing
+- **Scalable foundation** — start with small centres, scale to multi-branch institutes
+- **Dual frontends** — server-rendered CI4 admin + React SPA (API-driven)
+
+**Technology stack (locked in):**
+- **Backend:** PHP 8.1+ / CodeIgniter 4 (HMVC), MySQL 8, no ORM
+- **Auth:** JWT + refresh tokens (API) · session (admin UI)
+- **Frontend:** React + Vite + TypeScript + Tailwind + shadcn/ui *(upcoming)*
+- **Table prefix:** `cd_` · **API base:** `/api/v1` · **Admin base:** `/admin`
+
+---
+
+## 2. What We Have Done Till Now
+
+### ✅ Database Layer — 100% Complete
+
+| Item | Status | Details |
+|---|---|---|
+| **Schema** | ✅ Done | 44 tables, all `cd_` prefixed, InnoDB, utf8mb4, signed `INT(11)` |
+| **Multi-tenancy** | ✅ Done | `tenant_id` on every institute-owned row, `branch_id` where applicable |
+| **Indexes & FKs** | ✅ Done | Tenant-scoped unique constraints, composite indexes, FK cascade rules |
+| **Soft deletes** | ✅ Done | `deleted_at` on all business-history tables |
+| **Session table** | ✅ Done | `cd_ci_sessions` migration |
+| **Seed data** | ✅ Done | 2 tenants, 3 branches, 8 users, 51 permissions, 12 students, 4 batches, fees, payments, exams, attendance, timetable |
+| **Login credentials** | ✅ Done | All users → `Password@123` (bcrypt) |
+
+### ✅ Backend Core — 100% Complete
+
+| Item | Status | Details |
+|---|---|---|
+| **HMVC structure** | ✅ Done | `app/Modules/Api/` + `app/Modules/Admin/` |
+| **JWT auth** | ✅ Done | Login, refresh, rotation, revoke, logout |
+| **Session auth** | ✅ Done | Admin UI login/logout with bcrypt |
+| **Tenant context** | ✅ Done | `TenantContext` library + `TenantFilter` |
+| **RBAC engine** | ✅ Done | Role + permission + user-override model, `can()` helper |
+| **Admin filter** | ✅ Done | `AdminAuthFilter` supports `adminauth:permission` syntax |
+| **Permission filter** | ✅ Done | `PermissionFilter` for API (JWT-aware) |
+| **Audit logging** | ✅ Done | `cd_activity_logs` on every sensitive action |
+| **Helper library** | ✅ Done | `current_user`, `tenant_id`, `can`, `money`, `uuid4`, `str_starts_with` polyfills, `NexusSendEmail` |
+
+### ✅ Admin Panel (Server-Rendered CI4) — 100% Complete
+
+| Module | Status | Notes |
+|---|---|---|
+| **Login / Logout** | ✅ Done | Fully styled, error handling, audit logged |
+| **Dashboard** | ✅ Done | KPI cards, monthly collection chart, admissions chart, recent payments, upcoming exams |
+| **Super Admin Dashboard** | ✅ Done | Platform KPIs (tenants, students, MRR), signups chart, expiring subscriptions |
+| **Students** | ✅ Done | List, filter, paginate, admit, edit, delete (soft) |
+| **Courses** | ✅ Done | List, create, edit |
+| **Batches** | ✅ Done | List, create, enroll students, view students |
+| **Teachers** | ✅ Done | List, add |
+| **Attendance** | ✅ Done | Session list, mark daily attendance with bulk actions |
+| **Fees** | ✅ Done | Fee summary per student, collect payment with auto-allocation to installments |
+| **Exams** | ✅ Done | Schedule exams, enter marks (basic) |
+| **Reports** | ✅ Done | Fee collection, attendance by batch |
+| **Settings** | ✅ Done | Institute profile, branding, receipt footer |
+| **Profile / Change Password** | ✅ Done | All logged-in users, verifies current password, revokes tokens |
+| **Branches** | ✅ Done | Read-only list (CRUD scoped to Super Admin) |
+| **Users** | ✅ Done | List across tenants (super) / per tenant (owner), create with email invite |
+| **Tenants (Super Admin)** | ✅ Done | List, create (auto-provisions owner + branch + subscription), edit, suspend/activate, soft delete |
+| **Plans (Super Admin)** | ✅ Done | List, create, edit, toggle active, delete if unused |
+| **Subscriptions (Super Admin)** | ✅ Done | List subscriptions + payments, renew, cancel |
+| **Support Tickets** | ✅ Done | List, change status |
+| **Audit Logs** | ✅ Done | Filterable viewer, all sensitive actions |
+| **Revenue Report** | ✅ Done | Monthly breakdown, plan-wise MRR |
+| **Platform Settings** | ✅ Done | Signup toggle, support email, trial days, maintenance mode |
+| **Broadcast** | ✅ Done | Send notification to all tenant users |
+
+### ✅ Email System — 100% Complete
+
+| Email | Sent When | Template |
+|---|---|---|
+| **Welcome (tenant owner)** | New institute created | Gradient header, credentials, "change password" CTA |
+| **Welcome (new user)** | Owner creates user | Same design, login URL, temp password, role |
+| **Password changed** | User self-changes password | IP + device + timestamp, "not you?" warning |
+| **Admin password reset** | Super Admin resets any password | Temp password highlighted, "change immediately" warning |
+| **Force logout notice** | Super Admin revokes sessions | Timestamp, "contact admin if unexpected" |
+
+All templates: **inline CSS**, Gmail/Outlook/Apple Mail safe, HTML-escaped user input, responsive.
+
+### ✅ Security & Testing — 100% Complete
+
+| Feature | Status |
+|---|---|
+| Password hashing (bcrypt) | ✅ |
+| CSRF protection on all forms | ✅ |
+| Tenant isolation on every query | ✅ |
+| Permission check on every route | ✅ |
+| Force-logout on password change / suspend | ✅ |
+| Audit trail (logins, payments, tenant changes) | ✅ |
+| Session regeneration on login | ✅ |
+| `.env` secrets (JWT, DB, SendInBlue) | ✅ |
+| Cross-tenant access tests | ✅ Verified |
+
+### 📊 Summary
+
+| Layer | Progress |
+|---|---|
+| Database | **100%** |
+| Backend core | **100%** |
+| Admin panel | **100%** |
+| Email system | **100%** |
+| Security | **100%** |
+| **MVP (server-rendered) — Ready for beta use** | **✅** |
+
+---
+
+## 3. Future Tasks To Do
+
+### Phase A — React Frontend (Next Priority, ~4–6 weeks)
+
+| Task | Priority | Est. |
+|---|---|---|
+| Vite + React + TS + Tailwind + shadcn/ui scaffold | 🔴 Critical | 3 days |
+| Auth flow (login page, JWT storage, axios interceptor, protected routes) | 🔴 Critical | 3 days |
+| Layout shell (sidebar, topbar, breadcrumbs, dark mode) | 🔴 Critical | 2 days |
+| **Dashboard** page (KPI cards, charts, widgets) | 🔴 Critical | 4 days |
+| **Students** CRUD (list, filter, paginate, admit, edit) | 🔴 Critical | 5 days |
+| **Courses / Subjects** CRUD | 🟠 High | 3 days |
+| **Batches** CRUD + enrollment | 🟠 High | 3 days |
+| **Teachers** CRUD | 🟠 High | 2 days |
+| **Attendance** (mark, view, reports) | 🟠 High | 4 days |
+| **Fees** (collect, receipts PDF, defaulters) | 🟠 High | 5 days |
+| **Exams** (schedule, marks entry, results) | 🟠 High | 4 days |
+| **Reports** (fee, attendance, performance) | 🟡 Medium | 3 days |
+| **Settings** (profile, branding, users) | 🟡 Medium | 2 days |
+| React ↔ API integration + tenant scoping tests | 🔴 Critical | 2 days |
+
+### Phase B — Fee Module Deepening (~1–2 weeks)
+
+| Task | Priority |
+|---|---|
+| Fee structure builder (admission/monthly/quarterly/annual) | 🟠 High |
+| Installment schedule generator | 🟠 High |
+| Partial payment + allocation UI | 🟠 High |
+| PDF receipt generation (TCPDF/mpdf, branded) | 🟠 High |
+| Refund workflow with approval | 🟡 Medium |
+| Fee defaulter list + reminder emails/WhatsApp | 🟡 Medium |
+| Scholarship / discount / late fee rules | 🟡 Medium |
+
+### Phase C — Exams & Results (~1–2 weeks)
+
+| Task | Priority |
+|---|---|
+| Multi-subject exam configuration | 🟠 High |
+| Bulk marks entry (Excel import) | 🟠 High |
+| Auto-grade + rank calculation | 🟠 High |
+| Report card PDF generation | 🟠 High |
+| Merit list + subject-wise analytics | 🟡 Medium |
+| Online MCQ exam (question bank) | 🔵 Future |
+
+### Phase D — Communication (~1 week)
+
+| Task | Priority |
+|---|---|
+| SMS integration (MSG91 / Twilio) | 🟠 High |
+| WhatsApp Business API integration | 🟠 High |
+| Email templates per institute | 🟡 Medium |
+| Absence notifications to parents | 🟠 High |
+| Fee due reminders (cron) | 🟠 High |
+| Notification center UI (bell icon) | 🟡 Medium |
+
+### Phase E — Student & Parent Portals (~2 weeks)
+
+| Task | Priority |
+|---|---|
+| Student login + portal (attendance, fees, results, timetable) | 🟠 High |
+| Parent login + multi-child dashboard | 🟠 High |
+| Homework submission + study materials download | 🟡 Medium |
+| Online fee payment (Razorpay / Stripe) | 🟠 High |
+| Mobile-responsive parent experience | 🟠 High |
+
+### Phase F — SaaS Billing & Launch (~2 weeks)
+
+| Task | Priority |
+|---|---|
+| Payment gateway integration (Razorpay) | 🔴 Critical |
+| Subscription checkout (plan → payment → activation) | 🔴 Critical |
+| Auto-renew + grace period | 🟠 High |
+| Usage limits (student/staff/branch caps) | 🟠 High |
+| Invoice generation for subscriptions | 🟠 High |
+| Trial expiry warnings (email + in-app) | 🟠 High |
+| Maintenance mode enforcement | 🟡 Medium |
+
+### Phase G — DevOps & Production (~1 week)
+
+| Task | Priority |
+|---|---|
+| Production environment (VPS / Render / Railway) | 🔴 Critical |
+| MySQL managed database + automated backups | 🔴 Critical |
+| Cloud storage for student documents (S3 / R2) | 🟠 High |
+| CI/CD pipeline (GitHub Actions) | 🟠 High |
+| Error monitoring (Sentry) | 🟠 High |
+| Performance tuning (indexes, caching) | 🟡 Medium |
+| Load testing (1000 concurrent users) | 🟡 Medium |
+
+### Phase H — Advanced Features (Post-launch)
+
+| Task | Priority |
+|---|---|
+| QR-code attendance | 🔵 Future |
+| Biometric integration | 🔵 Future |
+| AI-powered performance analytics | 🔵 Future |
+| Multi-currency support | 🔵 Future |
+| White-label deployments | 🔵 Future |
+| Mobile app (React Native) | 🔵 Future |
+| Library / Inventory / Hostel modules | 🔵 Future |
+
+---
+
+## Key Metrics & Milestones
+
+| Milestone | Target Date | Status |
+|---|---|---|
+| Backend + Admin panel MVP | **Nov 2026** | ✅ **Complete** |
+| React frontend v1 | Dec 2026 | 🔴 In progress |
+| Beta launch (5 institutes) | Jan 2027 | ⏳ Planned |
+| Public launch (Razorpay billing live) | Feb 2027 | ⏳ Planned |
+| 100 paying institutes | Jun 2027 | ⏳ Planned |
+
+---
+
+## Dependencies & Risks
+
+| Risk | Mitigation |
+|---|---|
+| **SendInBlue email quota** | Add fallback SMTP, monitor daily sends |
+| **WhatsApp API rate limits** | Queue system (Redis + worker) |
+| **Payment gateway compliance** | PCI-DSS via Razorpay hosted checkout only |
+| **Multi-tenancy leak** | Automated cross-tenant tests in CI |
+| **Data privacy (Indian DPDP Act)** | Consent capture, data export, retention policy |
+| **PHP 7.4 fallback** | Current polyfills in place; **upgrade to PHP 8.2 required before public launch** |
+| **Scaling DB >2B rows** | Migrate `INT(11)` → `BIGINT` when approaching limit |
+
+---
+
+## Immediate Next Steps (This Week)
+
+1. **Decide:** Ship React frontend OR deepen server-rendered admin for beta?
+2. **Start React scaffold** if beta timelines matter (dashboard + students first)
+3. **Add receipt PDF** to fees module — institutes ask for this on day 1
+4. **Set up cloud storage** (S3 / R2) — student documents need persistence
+5. **Write README + deployment guide** for beta testers
+6. **Upgrade PHP** to 8.2+ before beta signups
+
+---
+
+**Bottom line:** The **foundation is production-ready**. CoachDesk can onboard real institutes **today** using the server-rendered admin panel. The remaining work is expanding to React frontend, billing automation, and portals — all extensions of a proven core, not rewrites.
+
+---
+
+*Prepared by: Development Team · For questions: support@coachdesk.in*
+

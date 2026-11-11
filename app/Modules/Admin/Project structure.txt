@@ -1,0 +1,94 @@
+app/
+├── Config/
+│   ├── Routes.php                    ← updated
+│   └── Filters.php                   ← updated
+├── Modules/
+│   ├── Api/                          ← already built (JWT/API for React)
+│   └── Admin/                        ← NEW: server-rendered admin
+│       ├── Config/
+│       │   └── Routes.php
+│       ├── Controllers/
+│       │   ├── AuthController.php
+│       │   ├── DashboardController.php
+│       │   ├── StudentController.php
+│       │   ├── CourseController.php
+│       │   ├── BatchController.php
+│       │   ├── TeacherController.php
+│       │   ├── AttendanceController.php
+│       │   ├── FeeController.php
+│       │   ├── ExamController.php
+│       │   ├── ReportController.php
+│       │   ├── BranchController.php
+│       │   ├── UserController.php
+│       │   └── SettingController.php
+│       ├── Filters/
+│       │   └── AdminAuthFilter.php
+│       ├── Helpers/
+│       │   └── admin_helper.php
+│       ├── Models/
+│       │   ├── TenantModel.php
+│       │   ├── UserModel.php
+│       │   ├── StudentModel.php
+│       │   ├── CourseModel.php
+│       │   ├── BatchModel.php
+│       │   ├── TeacherModel.php
+│       │   ├── AttendanceModel.php
+│       │   ├── FeeModel.php
+│       │   ├── ExamModel.php
+│       │   └── BranchModel.php
+│       ├── Services/
+│       │   ├── AuthService.php
+│       │   ├── DashboardService.php
+│       │   └── PermissionService.php
+│       └── Views/
+│           ├── layouts/
+│           │   ├── admin.php
+│           │   ├── auth.php
+│           │   └── partials/
+│           │       ├── sidebar.php
+│           │       ├── topbar.php
+│           │       ├── footer.php
+│           │       └── flash.php
+│           ├── auth/
+│           │   └── login.php
+│           ├── dashboard/
+│           │   └── index.php
+│           ├── students/
+│           │   ├── index.php
+│           │   ├── create.php
+│           │   └── edit.php
+│           ├── courses/
+│           │   ├── index.php
+│           │   └── form.php
+│           ├── batches/
+│           │   ├── index.php
+│           │   ├── form.php
+│           │   └── students.php
+│           ├── teachers/
+│           │   ├── index.php
+│           │   └── form.php
+│           ├── attendance/
+│           │   ├── index.php
+│           │   └── mark.php
+│           ├── fees/
+│           │   ├── index.php
+│           │   ├── collect.php
+│           │   └── receipt.php
+│           ├── exams/
+│           │   ├── index.php
+│           │   └── marks.php
+│           ├── reports/
+│           │   └── index.php
+│           └── settings/
+│               └── index.php
+
+
+Login credentials for testing
+User			Email	Password	Role
+Super Admin		super@coachdesk.in	Password@123	Platform
+ABC Owner		owner@abc.edu	Password@123	Institute Owner
+ABC GN Admin	admin.gn@abc.edu	Password@123	Branch Admin (GN only)
+ABC Accountant	acc@abc.edu	Password@123	Accountant
+ABC Teacher		amit@abc.edu	Password@123	Teacher
+ABC Receptionist	reception@abc.edu	Password@123	Receptionist
+XYZ Owner		owner@xyz.edu	Password@123	Institute Owner (different tenant)
